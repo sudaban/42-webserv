@@ -1,0 +1,77 @@
+Web Sunucu Temel Mantığı
+Bir web sunucu şu adımlarla çalışır:
+
+Dinleme: Belirli bir port'ta (örn: 8080) gelen bağlantıları bekler
+İstek Alma: Client'tan HTTP isteği gelir (GET /index.html gibi)
+İstek İşleme: İsteği parse eder, ne istendiğini anlar
+Yanıt Üretme: İstenen dosyayı bulur veya dinamik içerik üretir
+Yanıt Gönderme: HTTP formatında client'a geri gönderir
+
+Modüler Yapı (3 Kişilik Ekip İçin)
+Kişi 1: Network & Connection Manager
+Sorumluluk: Ağ bağlantılarını yönetmek
+Yapacakları:
+
+Socket oluşturma ve dinleme
+Client bağlantılarını kabul etme
+Çoklu bağlantı yönetimi (threading/async)
+Bağlantı kapatma
+
+Temel Mantık:
+Socket oluştur → Port'a bağla → Dinlemeye başla → 
+Her client için: Bağlantıyı kabul et → Request Handler'a ilet
+
+Kişi 2: HTTP Request/Response Handler
+Sorumluluk: HTTP protokolünü anlamak ve uygulamak
+Yapacakları:
+
+HTTP request parsing (GET, POST, headers)
+HTTP response oluşturma (status codes, headers)
+MIME type belirleme (.html, .css, .jpg)
+HTTP metodlarını destekleme
+
+Temel Mantık:
+Raw veri al → 
+Parse et (method, path, headers) → 
+İsteği yapılandır → 
+Response oluştur (status + headers + body) → 
+Raw format'a çevir
+
+Kişi 3: Resource Manager & Router
+Sorumluluk: Dosya sistemi ve içerik yönetimi
+Yapacakları:
+
+Static dosya servisi (HTML, CSS, JS, resimler)
+Dosya yolu güvenliği (directory traversal koruması)
+404, 403 gibi hata sayfaları
+Routing mantığı (/about → about.html)
+
+Temel Mantık:
+İstenen path al → 
+Dosya var mı kontrol et → 
+Güvenli mi kontrol et → 
+Dosyayı oku → 
+İçeriği döndür veya hata ver
+
+Modüller Arası İletişim
+[Network Manager] 
+    ↓ (raw data)
+[HTTP Handler] 
+    ↓ (parsed request)
+[Resource Manager] 
+    ↓ (content/error)
+[HTTP Handler] 
+    ↓ (formatted response)
+[Network Manager] 
+    ↓ (send to client)
+Ortak Kullanılacak Şeyler
+Config dosyası (herkes kullanır):
+
+Port numarası
+Root directory
+Timeout değerleri
+
+Logger (herkes kullanır):
+
+İstekleri loglama
+Hataları kaydetme
