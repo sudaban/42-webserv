@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: your_login <your_login@student.42.fr>      +#+  +:+       +#+        */
+/*   By: omadali <omadali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/18 00:35:00 by your_login       #+#    #+#             */
-/*   Updated: 2026/01/18 00:35:00 by your_login      ###   ########.fr       */
+/*   Created: 2026/01/18 00:35:00 by omadali          #+#    #+#             */
+/*   Updated: 2026/01/18 00:35:00 by omadali         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,8 @@ public:
 private:
     std::vector<ServerConfig> _servers;
     
-    // TODO: implement these
-    // bool parseServerBlock(std::ifstream& file, ServerConfig& server);
-    // bool parseLocationBlock(std::ifstream& file, LocationConfig& location);
+    void parseServerDirective(const std::string& line, ServerConfig& server);
+    void parseLocationDirective(const std::string& line, LocationConfig& location);
 };
 
 #endif
