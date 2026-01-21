@@ -1,5 +1,5 @@
 CPP = c++
-SRC = src/main.cpp src/Utils.cpp src/Document.cpp src/Server.cpp src/Config.cpp
+SRC = src/main.cpp src/Utils.cpp src/Document.cpp src/Server.cpp src/Config.cpp src/Request.cpp
 CFLAGS = -Wall -Werror -Wextra -std=c++98
 
 NAME = webserv
