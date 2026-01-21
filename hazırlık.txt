@@ -1,0 +1,76 @@
+Web Sunucu Temel Mantığı
+Bir web sunucu şu adımlarla çalışır:
+
+Dinleme: Belirli bir port'ta (örn: 8080) gelen bağlantıları bekler
+İstek Alma: Client'tan HTTP isteği gelir (GET /index.html gibi)
+İstek İşleme: İsteği parse eder, ne istendiğini anlar
+Yanıt Üretme: İstenen dosyayı bulur veya dinamik içerik üretir
+Yanıt Gönderme: HTTP formatında client'a geri gönderir
+
+👤 Kişi 1: Network Manager + Config Parser (Core)
+Webserver projesinde config parsing (iç içe location blokları, server name eşleştirme vb.) oldukça zordur.
+
+Görevleri:
+
+Socket yönetimi (Multiplexing: poll/epoll).
+
+Non-blocking I/O yönetimi.
+
+.conf dosyasının parse edilmesi ve veri yapısına dönüştürülmesi.
+
+Server'ın başlatılması ve ana döngü.
+
+👤 Kişi 2: Request Parser + CGI Executor
+Sadece "Request" kısmına odaklanmalı, Response üretme işini Kişi 3'e devretmeli. Buna ek olarak CGI çalıştırma (fork/execve/pipe) mantığını kurmalı.
+
+Görevleri:
+
+Gelen raw veriyi anlamlandırma (Request Parsing).
+
+Chunked request decoding (Bu çok önemli ve zordur).
+
+CGI Scriptlerini çalıştırma (PHP, Python scriptlerini çalıştırma mantığı).
+
+Request validation (İstek geçerli mi, boyutu sınırı aşıyor mu?).
+
+👤 Kişi 3: Response Builder + Resource Manager
+Dosya sistemini yönetmenin yanı sıra, Kişi 2'den gelen işlenmiş veriyi alıp son HTTP yanıtını (string olarak) hazırlayan kişi olmalı.
+
+Görevleri:
+
+GET/POST/DELETE metodlarının mantıksal işleyişi.
+
+Static dosya servisi ve Autoindex (Dizin listeleme) özelliği.
+
+Hata sayfalarının yönetimi (Error Pages).
+
+Response Construction: Status code, content-length, content-type gibi headerları ekleyip paketi string haline getirip Network modülüne teslim etmek.
+Temel Mantık:
+İstenen path al → 
+Dosya var mı kontrol et → 
+Güvenli mi kontrol et → 
+Dosyayı oku → 
+İçeriği döndür veya hata ver
+
+Modüller Arası İletişim
+[Network Manager] 
+    ↓ (raw data)
+[HTTP Handler] 
+    ↓ (parsed request)
+[Resource Manager] 
+    ↓ (content/error)
+[HTTP Handler] 
+    ↓ (formatted response)
+[Network Manager] 
+    ↓ (send to client)
+Ortak Kullanılacak Şeyler
+Config dosyası (herkes kullanır):
+
+Port numarası
+Root directory
+Timeout değerleri
+
+Logger (herkes kullanır):
+
+İstekleri loglama
+Hataları kaydetme
